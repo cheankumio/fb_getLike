@@ -72,13 +72,19 @@ public class SendRequest {
 
                         //存入所有文章至List
                         //for(int i=0;i<postLikes.getData().size();i++)
+                        if(postLikes!=null)
+                        if(postLikes.getData()!=null)
                             JSONObjectList.PostLikeDetialList.addAll(postLikes.getData());
-
-                        String after = postLikes.getPaging().getCursors().getAfter().toString();
-                        if(postLikes.getPaging().getNext()!=null) {
-                            getlikeUser(Token, after, contentID);
+                        if(postLikes!=null)
+                        if(postLikes.getPaging() != null && postLikes.getPaging().getCursors() != null) {
+                            String after = postLikes.getPaging().getCursors().getAfter().toString();
+                            if (postLikes.getPaging().getNext() != null) {
+                                getlikeUser(Token, after, contentID);
+                            } else {
+                                Log.d("MYLOG", "getlikeUser "+JSONObjectList.PostLikeDetialList.size()+"筆加載完畢.");
+                            }
                         }else{
-                            Log.d("MYLOG","getlikeUser 加載完畢.");
+                            Log.d("MYLOG", "getlikeUser 沒有資料.");
                         }
                     }
                 });
@@ -105,12 +111,19 @@ public class SendRequest {
                         Comments postComments = gson.fromJson(jsonString,Comments.class);
                         //存入所有文章至List
                         //for(int i=0;i<postComments.getData().size();i++)
+                        if(postComments!=null)
+                        if(postComments.getData()!=null)
                             JSONObjectList.PostCommentsDetialList.addAll(postComments.getData());
-                        String after = postComments.getPaging().getCursors().getAfter().toString();
-                        if(postComments.getPaging().getNext()!=null){
-                            getcommentsUser(Token,after,contentID);
+                        if(postComments!=null)
+                        if(postComments.getPaging() != null && postComments.getPaging().getCursors() != null) {
+                            String after = postComments.getPaging().getCursors().getAfter().toString();
+                            if (postComments.getPaging().getNext() != null) {
+                                getcommentsUser(Token, after, contentID);
+                            } else {
+                                Log.d("MYLOG", "getcommentsUser "+JSONObjectList.PostCommentsDetialList.size()+"筆加載完畢.");
+                            }
                         }else{
-                            Log.d("MYLOG","getcommentsUser 加載完畢.");
+                            Log.d("MYLOG", "getcommentsUser 沒有資料.");
                         }
                     }
                 });
@@ -126,26 +139,33 @@ public class SendRequest {
     }
 
     public static void getShareUser(final AccessToken Token, String afterdata, final String contentID) {
+        String contentID2 = contentID.split("_")[1];
         GraphRequest request = GraphRequest.newGraphPathRequest(
                 Token,
-                contentID+"/sharedposts",
+                contentID2+"/sharedposts",
                 new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse response) {
                         Gson gson = new Gson();
                         String jsonString = response.toString().split("graphObject:")[1].split(", error")[0];
                         Sharedposts postShared = gson.fromJson(jsonString,Sharedposts.class);
-                        if(postShared.getPaging().getNext()!=null)
-                        Log.d("MYLOG",postShared.getPaging().getCursors().getAfter());
+
                         //存入所有文章至List
                         //for(int i=0;i<postShared.getData().size();i++)
+                        if(postShared!=null)
+                        if(postShared.getData()!=null)
                             JSONObjectList.PostSharedDetialList.addAll(postShared.getData());
-                        String after = postShared.getPaging().getCursors().getAfter().toString();
-                        if(postShared.getPaging().getNext()!=null) {
-
-                            getShareUser(Token, after, contentID);
+                        if(postShared!=null)
+                        if(postShared.getPaging() != null && postShared.getPaging().getCursors() != null) {
+                            String after = postShared.getPaging().getCursors().getAfter().toString();
+                            if (postShared.getPaging() != null)
+                                if (postShared.getPaging().getNext() != null) {
+                                    getShareUser(Token, after, contentID);
+                                } else {
+                                    Log.d("MYLOG", "getShareUser "+JSONObjectList.PostSharedDetialList.size()+"筆加載完畢.");
+                                }
                         }else{
-                            Log.d("MYLOG","getShareUser 加載完畢.");
+                            Log.d("MYLOG", "getShareUser 沒有資料.");
                         }
                     }
                 });

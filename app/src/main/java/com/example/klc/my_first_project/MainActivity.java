@@ -6,10 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.klc.my_first_project.Functions.SendRequest;
 import com.example.klc.my_first_project.Object.FeedPost;
+import com.example.klc.my_first_project.Object.JSONObjectList;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Button choosePostBtn;
     public List<FeedPost> feedPost;
     int data_limit = 50;
+    TextView info_count;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         feedPost = new ArrayList<>();
+        info_count = (TextView)findViewById(R.id.textView);
         choosePostBtn = (Button)findViewById(R.id.button2);
         callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -95,9 +99,15 @@ public class MainActivity extends AppCompatActivity {
         switch(requestCode){
             case 700:
                 if(resultCode==RESULT_OK) {
-                    String postid = "/"+data.getExtras().getString("contentID");
+                    final String postid = "/"+data.getExtras().getString("contentID");
+                    Log.d("MYLOG",postid);
                     choosePostBtn.setText(postid);
-                    getAllInformation(accessToken,postid);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getAllInformation(accessToken,postid);
+                        }
+                    }).start();
                 }else{
                     Toast.makeText(this, "請選擇貼文", Toast.LENGTH_SHORT).show();
                 }
@@ -105,16 +115,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void getAllInformation(AccessToken Token, String contentID) {
-        SendRequest.getlikeUser(Token,"",contentID);
-        SendRequest.getcommentsUser(Token,"",contentID);
-        SendRequest.getShareUser(Token,"",contentID);
+    private void getAllInformation(final AccessToken Token, final String contentID) {
+        Thread TD = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (this) {
+                    SendRequest.getlikeUser(Token, "", contentID);
+                    SendRequest.getcommentsUser(Token, "", contentID);
+                    SendRequest.getShareUser(Token, "", contentID);
+                    Log.d("MYLOG","讀取資料中..");
+                }
+                synchronized (this){
+                    Log.d("MYLOG","取得數量中..");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        info_count.setText("like: " + JSONObjectList.PostLikeDetialList.size() +
+                                "  comments: " + JSONObjectList.PostCommentsDetialList.size() +
+                                "  sharedpost: " + JSONObjectList.PostSharedDetialList.size());
+                    }
+                });
+            }
+            }
+        });
+        TD.start();
     }
 
 
 
 
     public void choosePost(View v){
+        JSONObjectList.PostLikeDetialList = new ArrayList<>();
+        JSONObjectList.PostCommentsDetialList = new ArrayList<>();
+        JSONObjectList.PostSharedDetialList = new ArrayList<>();
         Intent in = new Intent();
         in.setClass(this,PostListView.class);
         startActivityForResult(in,700);
