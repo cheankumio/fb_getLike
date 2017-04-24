@@ -6,22 +6,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.klc.my_first_project.MainActivity">
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
+
+
+    <EditText
+        android:id="@+id/editText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_toLeftOf="@+id/button3"
+        android:layout_toStartOf="@+id/button3"
+        android:ems="10"
+        android:hint="網址"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/editText"
+        android:onClick="getGroupID"
+        android:text="送出" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/login_button"
-        android:layout_centerHorizontal="true"
         android:onClick="choosePost"
-        android:text="選擇貼文" />
+        android:text="選擇貼文"
+        android:layout_below="@+id/button3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:id="@+id/textView"
@@ -30,8 +50,8 @@
         android:layout_below="@+id/button2"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="TextView"
         android:textSize="18sp"
         android:textStyle="bold" />
+
 
 </RelativeLayout>

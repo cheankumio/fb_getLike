@@ -1,14 +1,25 @@
 package com.example.klc.my_first_project;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.klc.my_first_project.Functions.SendRequest;
 import com.example.klc.my_first_project.Object.FeedPost;
 import com.example.klc.my_first_project.Object.JSONObjectList;
@@ -24,62 +35,36 @@ import com.facebook.login.widget.LoginButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
-    CallbackManager callbackManager;
+import cn.carbswang.android.numberpickerview.library.NumberPickerView;
+
+public class MainActivity extends AppCompatActivity{
+
     AccessTokenTracker accessTokenTracker;
-    AccessToken accessToken;
-    LoginResult loginResult;
+    public static AccessToken accessToken;
     Button choosePostBtn;
     public List<FeedPost> feedPost;
     int data_limit = 50;
-    TextView info_count;
+    EditText edit;
+    RequestQueue mQueue;
+    Button buttonChoose;
+    String pageid="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mQueue = Volley.newRequestQueue(this);
         init();
-
-
-
-        if(accessToken!=null){
-            Log.d("MYLOG",accessToken.toString());
-            sendpost();
-        }else{
-            Log.d("MYLOG","accessToken is null");
-        }
     }
-
-    private void sendpost() {
-        SendRequest.getAllPosted("",accessToken,data_limit,"");
-    }
-
-
-
 
     private void init() {
+
+        edit = (EditText)findViewById(R.id.editText);
+        buttonChoose = (Button)findViewById(R.id.button2);
+        accessTokenTracker = SendRequest.accessTokenTracker;
         feedPost = new ArrayList<>();
-        info_count = (TextView)findViewById(R.id.textView);
         choosePostBtn = (Button)findViewById(R.id.button2);
-        callbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>(){
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(MainActivity.this, "登入成功", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancel() {
-                Toast.makeText(MainActivity.this, "登入失敗", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Toast.makeText(MainActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
-            }
-        });
         accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(
@@ -89,68 +74,20 @@ public class MainActivity extends AppCompatActivity {
         };
         // If the access token is available already assign it.
         accessToken = AccessToken.getCurrentAccessToken();
+
+
     }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode){
-            case 700:
-                if(resultCode==RESULT_OK) {
-                    final String postid = "/"+data.getExtras().getString("contentID");
-                    Log.d("MYLOG",postid);
-                    choosePostBtn.setText(postid);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getAllInformation(accessToken,postid);
-                        }
-                    }).start();
-                }else{
-                    Toast.makeText(this, "請選擇貼文", Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
-    }
-
-    private void getAllInformation(final AccessToken Token, final String contentID) {
-        Thread TD = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (this) {
-                    SendRequest.getlikeUser(Token, "", contentID);
-                    SendRequest.getcommentsUser(Token, "", contentID);
-                    SendRequest.getShareUser(Token, "", contentID);
-                    Log.d("MYLOG","讀取資料中..");
-                }
-                synchronized (this){
-                    Log.d("MYLOG","取得數量中..");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        info_count.setText("like: " + JSONObjectList.PostLikeDetialList.size() +
-                                "  comments: " + JSONObjectList.PostCommentsDetialList.size() +
-                                "  sharedpost: " + JSONObjectList.PostSharedDetialList.size());
-                    }
-                });
-            }
-            }
-        });
-        TD.start();
-    }
-
-
-
 
     public void choosePost(View v){
+        SendRequest.boolean_post=false;
+        JSONObjectList.FeedPostDetialList.clear();
+        SendRequest.getAllPosted(pageid,accessToken,data_limit,"");
         JSONObjectList.PostLikeDetialList = new ArrayList<>();
         JSONObjectList.PostCommentsDetialList = new ArrayList<>();
         JSONObjectList.PostSharedDetialList = new ArrayList<>();
         Intent in = new Intent();
         in.setClass(this,PostListView.class);
-        startActivityForResult(in,700);
+        startActivity(in);
     }
 
 
@@ -160,4 +97,17 @@ public class MainActivity extends AppCompatActivity {
         accessTokenTracker.stopTracking();
     }
 
+    public void getGroupID(View v){
+        String url = edit.getText().toString().split("facebook.com/")[1];
+        SendRequest.getPageID(accessToken,url);
+
+
+    }
+
+    public void showAnimation(){
+        TranslateAnimation ta = new TranslateAnimation(0,0,-500,0);
+        ta.setDuration(1000);
+        ta.setInterpolator(new AccelerateInterpolator(1.0f));
+        buttonChoose.startAnimation(ta);
+    }
 }

@@ -13,6 +13,7 @@ import com.example.klc.my_first_project.Object.PostLikes;
 import com.example.klc.my_first_project.Object.PostShared;
 import com.example.klc.my_first_project.Object.Sharedposts;
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.google.gson.Gson;
@@ -22,13 +23,15 @@ import com.google.gson.Gson;
  */
 
 public class SendRequest {
+    public static boolean boolean_post=false,boolean_likes=false,boolean_commends=false,boolean_shared=false;
     public static String tmp="";
+    public static AccessTokenTracker accessTokenTracker;
+    public static String pageid;
+    public static void getAllPosted(String groupID, final AccessToken Token, final int data_limit, String afterdata){
 
-    public static void getAllPosted(String url, final AccessToken Token, final int data_limit, String afterdata){
-        String groupID = "/258681614328001/feed";
         final GraphRequest request = GraphRequest.newGraphPathRequest(
                 Token,
-                groupID,
+                "/"+pageid+"/feed",
                 new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse response) {
@@ -43,6 +46,7 @@ public class SendRequest {
                             getAllPosted("", Token, data_limit, after);
                         }else{
                             Log.d("MYLOG","共 "+JSONObjectList.FeedPostDetialList.size()+" 篇文章加載完畢.");
+                            boolean_post = true;
                         }
                     }
                 });
@@ -86,6 +90,7 @@ public class SendRequest {
                         }else{
                             Log.d("MYLOG", "getlikeUser 沒有資料.");
                         }
+                        boolean_likes=true;
                     }
                 });
 
@@ -125,6 +130,7 @@ public class SendRequest {
                         }else{
                             Log.d("MYLOG", "getcommentsUser 沒有資料.");
                         }
+                        boolean_commends = true;
                     }
                 });
 
@@ -167,6 +173,7 @@ public class SendRequest {
                         }else{
                             Log.d("MYLOG", "getShareUser 沒有資料.");
                         }
+                        boolean_shared = true;
                     }
                 });
 
@@ -177,6 +184,21 @@ public class SendRequest {
             parameters.putString("after", afterdata);
         }
         request.setParameters(parameters);
+        request.executeAsync();
+    }
+
+    public static void getPageID(final AccessToken Token, String url) {
+        GraphRequest request = GraphRequest.newGraphPathRequest(
+                Token,
+                "/"+url,
+                new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        pageid = response.toString().split("id\":\"")[1].split("\"")[0];
+                        Log.d("MYLOG",pageid);
+                    }
+                });
+
         request.executeAsync();
     }
 }

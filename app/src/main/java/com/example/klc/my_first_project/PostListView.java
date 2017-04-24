@@ -30,8 +30,10 @@ public class PostListView extends AppCompatActivity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(PostListView.this, "你點到了 "+JSONObjectList.FeedPostDetialList.get(position).getId(), Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK,new Intent().putExtra("contentID",JSONObjectList.FeedPostDetialList.get(position).getId()));
+                Intent SetDisplayData = new Intent();
+                SetDisplayData.setClass(PostListView.this,SetDisplayData_Activity.class);
+                SetDisplayData.putExtra("contentID",JSONObjectList.FeedPostDetialList.get(position).getId());
+                startActivity(SetDisplayData);
                 finish();
             }
         });
