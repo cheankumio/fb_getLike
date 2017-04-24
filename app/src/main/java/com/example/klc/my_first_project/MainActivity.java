@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import cn.carbswang.android.numberpickerview.library.NumberPickerView;
-
 public class MainActivity extends AppCompatActivity{
 
     AccessTokenTracker accessTokenTracker;
@@ -81,6 +79,8 @@ public class MainActivity extends AppCompatActivity{
     public void choosePost(View v){
         SendRequest.boolean_post=false;
         JSONObjectList.FeedPostDetialList.clear();
+        SendRequest.limit_counts = 0;
+        SendRequest.boolean_post =false;
         SendRequest.getAllPosted(pageid,accessToken,data_limit,"");
         JSONObjectList.PostLikeDetialList = new ArrayList<>();
         JSONObjectList.PostCommentsDetialList = new ArrayList<>();
