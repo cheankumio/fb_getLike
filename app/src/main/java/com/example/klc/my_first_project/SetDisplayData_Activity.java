@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.klc.my_first_project.Functions.SendRequest;
@@ -42,6 +43,7 @@ public class SetDisplayData_Activity extends AppCompatActivity {
     List<String> commants_name;
     List<String> sharedpost_name;
     List<String> sendList;
+    EditText title;
     int a=0,b=0,c=0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class SetDisplayData_Activity extends AppCompatActivity {
     }
 
     private void checkBoxFunction() {
+        title = (EditText)findViewById(R.id.editText2);
         likes.setOnCheckedChangeListener(check);
         commants.setOnCheckedChangeListener(check);
         sharedposts.setOnCheckedChangeListener(check);
@@ -169,19 +172,19 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         for(int i=0;i<JSONObjectList.PostLikeDetialList.size();i++){
             String str = JSONObjectList.PostLikeDetialList.get(i).getName()+"/"+JSONObjectList.PostLikeDetialList.get(i).getId();
             likes_name.add(str);
-            Log.d("MYLOG","likes: "+str);
+            //Log.d("MYLOG","likes: "+str);
         }
         for(int i=0;i<JSONObjectList.PostCommentsDetialList.size();i++){
             String str = JSONObjectList.PostCommentsDetialList.get(i).getFrom().getName()+"/"+JSONObjectList.PostCommentsDetialList.get(i).getFrom().getId();
             commants_name.add(str);
-            Log.d("MYLOG","commants: "+str);
+            //Log.d("MYLOG","commants: "+str);
         }
 
         for(int i=0;i<JSONObjectList.PostSharedDetialList.size();i++){
             String name = JSONObjectList.PostSharedDetialList.get(i).getFrom().getName();
             String id = JSONObjectList.PostSharedDetialList.get(i).getFrom().getId();
             sharedpost_name.add(name+"/"+id);
-            Log.d("MYLOG","shares: "+name+"/"+id);
+            //Log.d("MYLOG","shares: "+name+"/"+id);
         }
     }
 
@@ -196,6 +199,7 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         Intent go = new Intent();
         go.setClass(this,Lottery_Activity.class);
         go.putExtra("lotteryObject",sendList.toArray(new String[0]));
+        go.putExtra("title",title.getText().toString());
         startActivity(go);
     }
 }

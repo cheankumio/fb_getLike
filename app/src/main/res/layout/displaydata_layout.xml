@@ -40,21 +40,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="按讚(Likes)" />
+                    android:text="按讚Likes" />
 
                 <CheckBox
                     android:id="@+id/checkBox2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="留言(Commants)" />
+                    android:text="留言Commants" />
 
                 <CheckBox
                     android:id="@+id/checkBox3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="分享(Sharedpost)" />
+                    android:text="分享Sharedpost" />
 
             </LinearLayout>
 
@@ -66,6 +66,17 @@
                 android:gravity="center_horizontal"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/editText2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:hint="抽獎標題 (title)"
+                android:inputType="textPersonName" />
 
             <Button
                 android:id="@+id/button4"

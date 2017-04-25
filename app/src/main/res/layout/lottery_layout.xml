@@ -14,6 +14,18 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:text="沒有標題的抽獎"
+            android:textColor="#FF4081"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

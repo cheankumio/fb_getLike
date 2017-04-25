@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void init() {
-        pd = new ProgressDialog(this);
         edit = (EditText)findViewById(R.id.editText);
         accessTokenTracker = SendRequest.accessTokenTracker;
         feedPost = new ArrayList<>();
@@ -77,28 +76,31 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void getPostInfo(){
-        boolean_post=false;
-        JSONObjectList.FeedPostDetialList.clear();
-        SendRequest.limit_counts = 1;
-        SendRequest.getAllPosted(pageid,accessToken,data_limit,"");
+        if(pageid.equals("xxxxxxxxxxxxxxxxxxxx")==false){
+            boolean_post = false;
+            JSONObjectList.FeedPostDetialList.clear();
+            SendRequest.limit_counts = 1;
+            SendRequest.getAllPosted(pageid, accessToken, data_limit, "");
 
-        final Handler hn2 = new Handler();
-        hn2.post(new Runnable() {
-            @Override
-            public void run() {
-                if(boolean_post){
-                    pd.dismiss();
-                    Intent in = new Intent();
-                    in.setClass(MainActivity.this,PostListView.class);
-                    startActivity(in);
-                    hn2.removeCallbacks(this);
-                }else{
-                    hn2.postDelayed(this,1000);
+            final Handler hn2 = new Handler();
+            hn2.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (boolean_post) {
+                        pd.dismiss();
+                        Intent in = new Intent();
+                        in.setClass(MainActivity.this, PostListView.class);
+                        startActivity(in);
+                        hn2.removeCallbacks(this);
+                    } else {
+                        hn2.postDelayed(this, 1000);
+                    }
                 }
-            }
-        });
-
-
+            });
+        }else{
+            pd.dismiss();
+            pd.cancel();
+        }
     }
 
     @Override
@@ -108,19 +110,28 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void getGroupID(View v){
+        pageid="";
         String userinput = edit.getText().toString();
         String url="";
         if(isInteger(userinput)){
+            Log.d("MYLOG", "isInteger");
             url = userinput;
         }else{
-            url = userinput.split("facebook.com/")[1].split("/")[0];
-            if(isInteger(url)==false){
-                url = url.split("-")[1];
+            Log.d("MYLOG", "not Integer");
+            if(userinput.contains("facebook.com/")) {
+                Log.d("MYLOG", "is Facebook");
+                url = userinput.split("facebook.com/")[1].split("/")[0];
+            }else{
+                Log.d("MYLOG", "not Facebook");
+                url = userinput;
             }
         }
-        if(isInteger(url) && url.length()>1) {
-            Log.d("MYLOG", url);
-            SendRequest.getPageID(accessToken, url);
+
+        Log.d("MYLOG", "取得URL: "+url);
+        if(url.length()>1) {
+            SendRequest.getPageID(this,accessToken, url);
+            Log.d("MYLOG", "跳出dialog");
+            pd = new ProgressDialog(this);
             pd.setTitle("請稍候");
             pd.setMessage("資料讀取中");
             pd.show();
@@ -128,12 +139,13 @@ public class MainActivity extends AppCompatActivity{
             hn.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (pageid != null) {
-                        if (pageid.length() > 5) {
-                            getPostInfo();
-                            hn.removeCallbacks(this);
-                        }
+                    Log.d("MYLOG", "pageid != null");
+                    if (pageid.length() > 5) {
+                        getPostInfo();
+                        hn.removeCallbacks(this);
+                        Log.d("MYLOG", "取得 pageid");
                     } else {
+                        Log.d("MYLOG", "handle 持續執行中");
                         hn.postDelayed(this, 1000);
                     }
                 }

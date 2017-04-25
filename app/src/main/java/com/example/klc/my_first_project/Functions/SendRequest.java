@@ -1,5 +1,6 @@
 package com.example.klc.my_first_project.Functions;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -17,6 +18,8 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.google.gson.Gson;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * Created by klc on 2017/4/23.
@@ -54,9 +57,10 @@ public class SendRequest {
                 });
 
         Bundle parameters = new Bundle();
+        parameters.putString("pretty","0");
         parameters.putString("fields", "id,message,created_time");
         parameters.putString("limit", data_limit+"");
-        if(afterdata.length()>30){
+        if(afterdata.length()>10){
             parameters.putString("after", afterdata);
         }
         request.setParameters(parameters);
@@ -65,6 +69,7 @@ public class SendRequest {
 
 
     public static void getlikeUser(final AccessToken Token, String afterdata, final String contentID) {
+
         GraphRequest request = GraphRequest.newGraphPathRequest(
                 Token,
                 contentID+"/likes",
@@ -87,19 +92,22 @@ public class SendRequest {
                             if (postLikes.getPaging().getNext() != null) {
                                 getlikeUser(Token, after, contentID);
                             } else {
+                                boolean_likes=true;
                                 Log.d("MYLOG", "getlikeUser "+JSONObjectList.PostLikeDetialList.size()+"筆加載完畢.");
                             }
                         }else{
+                            boolean_likes=true;
                             Log.d("MYLOG", "getlikeUser 沒有資料.");
                         }
-                        boolean_likes=true;
+
                     }
                 });
 
         Bundle parameters = new Bundle();
+        parameters.putString("pretty","0");
         parameters.putString("fields", "id,name");
         parameters.putString("limit", "1000");
-        if(afterdata.length()>30){
+        if(afterdata.length()>1){
             parameters.putString("after", afterdata);
         }
         request.setParameters(parameters);
@@ -127,19 +135,22 @@ public class SendRequest {
                             if (postComments.getPaging().getNext() != null) {
                                 getcommentsUser(Token, after, contentID);
                             } else {
+                                boolean_commends = true;
                                 Log.d("MYLOG", "getcommentsUser "+JSONObjectList.PostCommentsDetialList.size()+"筆加載完畢.");
                             }
                         }else{
+                            boolean_commends = true;
                             Log.d("MYLOG", "getcommentsUser 沒有資料.");
                         }
-                        boolean_commends = true;
+
                     }
                 });
 
         Bundle parameters = new Bundle();
+        parameters.putString("pretty","0");
         parameters.putString("fields", "from,message");
         parameters.putString("limit", "100");
-        if(afterdata.length()>30){
+        if(afterdata.length()>1){
             parameters.putString("after", afterdata);
         }
         request.setParameters(parameters);
@@ -147,6 +158,7 @@ public class SendRequest {
     }
 
     public static void getShareUser(final AccessToken Token, String afterdata, final String contentID) {
+        Log.d("MYLOG","afterdata: "+afterdata);
         String contentID2 = contentID.split("_")[1];
         GraphRequest request = GraphRequest.newGraphPathRequest(
                 Token,
@@ -170,34 +182,44 @@ public class SendRequest {
                                 if (postShared.getPaging().getNext() != null) {
                                     getShareUser(Token, after, contentID);
                                 } else {
+                                    boolean_shared = true;
                                     Log.d("MYLOG", "getShareUser "+JSONObjectList.PostSharedDetialList.size()+"筆加載完畢.");
                                 }
                         }else{
+                            boolean_shared = true;
                             Log.d("MYLOG", "getShareUser 沒有資料.");
                         }
-                        boolean_shared = true;
+
                     }
                 });
 
         Bundle parameters = new Bundle();
+        parameters.putString("pretty","0");
         parameters.putString("fields", "from,message");
-        parameters.putString("limit", "100");
-        if(afterdata.length()>30){
+        parameters.putString("limit", "25");
+        if(afterdata.length()>1){
             parameters.putString("after", afterdata);
         }
         request.setParameters(parameters);
         request.executeAsync();
     }
 
-    public static void getPageID(final AccessToken Token, String url) {
-        GraphRequest request = GraphRequest.newGraphPathRequest(
+    public static void getPageID(final Context context, final AccessToken Token, String url) {
+        final GraphRequest request = GraphRequest.newGraphPathRequest(
                 Token,
                 "/"+url,
                 new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse response) {
-                        pageid = response.toString().split("id\":\"")[1].split("\"")[0];
-                        Log.d("MYLOG",pageid);
+                        Log.d("MYLOG",response.toString());
+                        if(response.toString().contains("Unsupported") || response.toString().contains("803")
+                                || response.toString().contains("OAuthException")){
+                            pageid = "xxxxxxxxxxxxxxxxxxxx";
+                            Toasty.error(context,"URL解析出問題, 請填入專頁ID",Toast.LENGTH_LONG,true).show();
+                        }else {
+                            pageid = response.toString().split("id\":\"")[1].split("\"")[0];
+                            Log.d("MYLOG", "pageid: "+pageid);
+                        }
                     }
                 });
 

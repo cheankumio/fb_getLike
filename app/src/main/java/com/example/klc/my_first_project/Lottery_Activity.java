@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import java.util.Random;
 
@@ -24,6 +25,7 @@ public class Lottery_Activity extends AppCompatActivity implements NumberPickerV
     String[] display;
     int timer;
     int counts = 1;
+    TextView title;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +36,8 @@ public class Lottery_Activity extends AppCompatActivity implements NumberPickerV
         Intent getArray = getIntent();
         display = getArray.getStringArrayExtra("lotteryObject");
         picker = (NumberPickerView) findViewById(R.id.picker);
+        title = (TextView)findViewById(R.id.textView4);
+        title.setText(getArray.getStringExtra("title"));
         picker.setOnScrollListener(this);
         picker.setOnValueChangedListener(this);
         picker.setOnValueChangeListenerInScrolling(this);
