@@ -27,7 +27,7 @@ public class SendRequest {
     public static String tmp="";
     public static AccessTokenTracker accessTokenTracker;
     public static String pageid;
-    public static int limit_counts =0;
+    public static int limit_counts =1;
     public static void getAllPosted(String groupID, final AccessToken Token, final int data_limit, String afterdata){
 
         final GraphRequest request = GraphRequest.newGraphPathRequest(
@@ -43,9 +43,9 @@ public class SendRequest {
                         //存入所有文章至List
                         JSONObjectList.FeedPostDetialList.addAll(feedPosts.getData());
                         String after = feedPosts.getPages().getCursors().getAfter().toString();
-                        if(feedPosts.getPages().getNext()!=null && limit_counts<3) {
+                        if(feedPosts.getPages().getNext()!=null && limit_counts>0) {
                             getAllPosted("", Token, data_limit, after);
-                            limit_counts++;
+                            limit_counts--;
                         }else{
                             Log.d("MYLOG","共 "+JSONObjectList.FeedPostDetialList.size()+" 篇文章加載完畢.");
                             boolean_post = true;

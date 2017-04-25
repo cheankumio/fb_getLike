@@ -34,7 +34,7 @@ public class PostListView extends AppCompatActivity {
                 SetDisplayData.setClass(PostListView.this,SetDisplayData_Activity.class);
                 SetDisplayData.putExtra("contentID",JSONObjectList.FeedPostDetialList.get(position).getId());
                 startActivity(SetDisplayData);
-                finish();
+                //finish();
             }
         });
 
