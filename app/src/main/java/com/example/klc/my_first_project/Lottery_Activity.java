@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 
 import java.util.Random;
 
@@ -27,6 +28,9 @@ public class Lottery_Activity extends AppCompatActivity implements NumberPickerV
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lottery_layout);
+
+        getSupportActionBar().hide();
+
         Intent getArray = getIntent();
         display = getArray.getStringArrayExtra("lotteryObject");
         picker = (NumberPickerView) findViewById(R.id.picker);

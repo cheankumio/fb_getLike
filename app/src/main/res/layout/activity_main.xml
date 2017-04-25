@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/editText"
         android:layout_centerHorizontal="false"
-        android:text="請輸入粉絲頁網址或ＩＤ"
+        android:text="請輸入粉絲頁網址或ＩＤ\nInput your fans page URL or ID "
         android:textSize="16sp"
         android:textStyle="bold" />
 

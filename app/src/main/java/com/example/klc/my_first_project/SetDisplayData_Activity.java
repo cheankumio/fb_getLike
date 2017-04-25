@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -46,8 +47,13 @@ public class SetDisplayData_Activity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.displaydata_layout);
+
+        getSupportActionBar().hide();
+
         Intent getContentData = getIntent();
         String postid = "/"+getContentData.getExtras().getString("contentID");
+
+
 
         init();
         getAllInformation(accessToken,postid);

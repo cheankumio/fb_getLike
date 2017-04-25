@@ -6,6 +6,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.klc.my_first_project.Functions.SendRequest;
@@ -16,6 +17,8 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import es.dmoral.toasty.Toasty;
 
 import static com.example.klc.my_first_project.MainActivity.accessToken;
 
@@ -31,17 +34,23 @@ public class WelcomePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome_page);
 
+        getSupportActionBar().hide();
+
         init();
 
         if(accessToken!=null){
             Log.d("MYLOG",accessToken.toString());
-            Intent in = new Intent();
-            in.setClass(this,MainActivity.class);
-            startActivity(in);
-            finish();
+            toNextActivity();
         }else{
             Log.d("MYLOG","accessToken is null");
         }
+    }
+
+    private void toNextActivity() {
+        Intent in = new Intent();
+        in.setClass(this,MainActivity.class);
+        startActivity(in);
+        finish();
     }
 
     private void init() {
@@ -50,17 +59,18 @@ public class WelcomePage extends AppCompatActivity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>(){
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(WelcomePage.this, "登入成功", Toast.LENGTH_SHORT).show();
+                Toasty.success(WelcomePage.this,"登入成功",Toast.LENGTH_SHORT,true).show();
+                toNextActivity();
             }
 
             @Override
             public void onCancel() {
-                Toast.makeText(WelcomePage.this, "登入失敗", Toast.LENGTH_SHORT).show();
+                Toasty.warning(WelcomePage.this,"登入失敗",Toast.LENGTH_SHORT,true).show();
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(WelcomePage.this, "ERROR", Toast.LENGTH_SHORT).show();
+                Toasty.error(WelcomePage.this,"ERROR",Toast.LENGTH_SHORT,true).show();
             }
         });
         SendRequest.accessTokenTracker = new AccessTokenTracker() {
