@@ -50,6 +50,7 @@ public class WelcomePage extends AppCompatActivity {
         Intent in = new Intent();
         in.setClass(this,MainActivity.class);
         startActivity(in);
+        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
         finish();
     }
 

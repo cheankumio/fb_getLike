@@ -110,6 +110,7 @@ public class Lottery_Activity extends AppCompatActivity implements NumberPickerV
                 Intent forResult = new Intent();
                 forResult.setClass(Lottery_Activity.this,LuckActivity.class);
                 startActivity(forResult);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
         }
     };

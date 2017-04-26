@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 /**
  * Created by c1103304 on 2017/4/26.
@@ -21,7 +23,7 @@ import com.android.volley.toolbox.Volley;
 
 public class LuckActivity extends AppCompatActivity {
     TextView title;
-    ImageView pic;
+    RoundedImageView pic;
     String pictureUrl ;
     String luckmansName;
     @Override
@@ -56,8 +58,12 @@ public class LuckActivity extends AppCompatActivity {
 
     private void init() {
         title = (TextView)findViewById(R.id.textView5) ;
-        pic = (ImageView)findViewById(R.id.imageView);
+        pic = (RoundedImageView)findViewById(R.id.imageView);
         pictureUrl = Lottery_Activity.pictureUrl;
         luckmansName = Lottery_Activity.luckmansName;
+    }
+
+    public void exits(View v){
+        finish();
     }
 }

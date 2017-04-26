@@ -12,7 +12,8 @@
         android:background="@drawable/button_backg"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="25dp">
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp">
 
         <TextView
             android:id="@+id/textView5"
@@ -23,21 +24,44 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
-        <ImageView
+        <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/imageView"
             android:layout_width="250dp"
             android:layout_height="250dp"
-            app:srcCompat="@android:drawable/ic_menu_help" />
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_menu_help"
+            app:riv_border_color="#333333"
+            app:riv_border_width="5dip"
+
+            app:riv_corner_radius="5dip"
+            app:riv_mutate_background="true"
+            app:riv_oval="true" />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="恭喜中獎"
             android:textColor="#FF5056"
             android:textSize="30sp"
             android:textStyle="bold" />
+
     </LinearLayout>
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/com_facebook_button_background"
+        android:onClick="exits"
+        android:text="抽下一位"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
 </RelativeLayout>

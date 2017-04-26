@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity{
                         Intent in = new Intent();
                         in.setClass(MainActivity.this, PostListView.class);
                         startActivity(in);
+                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                         hn2.removeCallbacks(this);
                     } else {
                         hn2.postDelayed(this, 1000);
@@ -132,6 +133,7 @@ public class MainActivity extends AppCompatActivity{
             SendRequest.getPageID(this,accessToken, url);
             Log.d("MYLOG", "跳出dialog");
             pd = new ProgressDialog(this);
+            pd.setCancelable(false);
             pd.setTitle("請稍候");
             pd.setMessage("資料讀取中");
             pd.show();

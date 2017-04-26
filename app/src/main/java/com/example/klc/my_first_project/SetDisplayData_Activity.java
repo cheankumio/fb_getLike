@@ -143,6 +143,7 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         filter_count = (TextView)findViewById(R.id.textView3);
         watch_data = new Handler();
         pgd = new ProgressDialog(this);
+
     }
 
 
@@ -155,6 +156,7 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         JSONObjectList.PostCommentsDetialList = new ArrayList<>();
         JSONObjectList.PostSharedDetialList = new ArrayList<>();
         pgd.setTitle("請稍候");
+        pgd.setCancelable(false);
         pgd.setMessage("資料讀取中");
         pgd.show();
         getlikeUser(Token, "", contentID);
@@ -217,6 +219,7 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         go.putExtra("lotteryObject",sendList.toArray(new String[0]));
         go.putExtra("title",title.getText().toString());
         startActivity(go);
+        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
     }
 
     public List<String> removeDuplicate(List<String> list) {

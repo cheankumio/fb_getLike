@@ -41,6 +41,7 @@ public class PostListView extends AppCompatActivity {
                 SetDisplayData.setClass(PostListView.this,SetDisplayData_Activity.class);
                 SetDisplayData.putExtra("contentID",JSONObjectList.FeedPostDetialList.get(position).getId());
                 startActivity(SetDisplayData);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 //finish();
             }
         });
