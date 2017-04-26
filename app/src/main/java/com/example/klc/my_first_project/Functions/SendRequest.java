@@ -5,6 +5,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.klc.my_first_project.Lottery_Activity;
+import com.example.klc.my_first_project.LuckActivity;
 import com.example.klc.my_first_project.Object.Comments;
 import com.example.klc.my_first_project.Object.FeedPost;
 import com.example.klc.my_first_project.Object.JSONObjectList;
@@ -13,6 +20,7 @@ import com.example.klc.my_first_project.Object.PostComments;
 import com.example.klc.my_first_project.Object.PostLikes;
 import com.example.klc.my_first_project.Object.PostShared;
 import com.example.klc.my_first_project.Object.Sharedposts;
+import com.example.klc.my_first_project.Object.picture;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.GraphRequest;
@@ -26,7 +34,7 @@ import es.dmoral.toasty.Toasty;
  */
 
 public class SendRequest {
-    public static boolean boolean_post=false,boolean_likes=false,boolean_commends=false,boolean_shared=false;
+    public static boolean boolean_post=false,boolean_likes=false,boolean_commends=false,boolean_shared=false,boolean_picture=false;
     public static String tmp="";
     public static AccessTokenTracker accessTokenTracker;
     public static String pageid;
@@ -40,9 +48,7 @@ public class SendRequest {
                     @Override
                     public void onCompleted(GraphResponse response) {
                         Gson gson = new Gson();
-                        //Log.d("MYLOG","response: "+response.toString());
-                        String jsonString = response.toString().split("graphObject:")[1].split(", error")[0];
-                        FeedPost feedPosts = gson.fromJson(jsonString,FeedPost.class);
+                        FeedPost feedPosts = gson.fromJson(response.getJSONObject().toString(),FeedPost.class);
                         //存入所有文章至List
                         JSONObjectList.FeedPostDetialList.addAll(feedPosts.getData());
                         String after = feedPosts.getPages().getCursors().getAfter().toString();
@@ -77,9 +83,7 @@ public class SendRequest {
                     @Override
                     public void onCompleted(GraphResponse response) {
                         Gson gson = new Gson();
-                        //Log.d("MYLOG","response: "+response.toString());
-                        String jsonString = response.toString().split("graphObject:")[1].split(", error")[0];
-                        Likes postLikes = gson.fromJson(jsonString,Likes.class);
+                        Likes postLikes = gson.fromJson(response.getJSONObject().toString(),Likes.class);
 
                         //存入所有文章至List
                         //for(int i=0;i<postLikes.getData().size();i++)
@@ -122,8 +126,7 @@ public class SendRequest {
                     @Override
                     public void onCompleted(GraphResponse response) {
                         Gson gson = new Gson();
-                        String jsonString = response.toString().split("graphObject:")[1].split(", error")[0];
-                        Comments postComments = gson.fromJson(jsonString,Comments.class);
+                        Comments postComments = gson.fromJson(response.getJSONObject().toString(),Comments.class);
                         //存入所有文章至List
                         //for(int i=0;i<postComments.getData().size();i++)
                         if(postComments!=null)
@@ -159,6 +162,7 @@ public class SendRequest {
 
     public static void getShareUser(final AccessToken Token, String afterdata, final String contentID) {
         Log.d("MYLOG","afterdata: "+afterdata);
+
         String contentID2 = contentID.split("_")[1];
         GraphRequest request = GraphRequest.newGraphPathRequest(
                 Token,
@@ -166,6 +170,7 @@ public class SendRequest {
                 new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse response) {
+                        Log.d("MYLOG",response.toString());
                         Gson gson = new Gson();
                         String jsonString = response.toString().split("graphObject:")[1].split(", error")[0];
                         Sharedposts postShared = gson.fromJson(jsonString,Sharedposts.class);
@@ -175,16 +180,20 @@ public class SendRequest {
                         if(postShared!=null)
                         if(postShared.getData()!=null)
                             JSONObjectList.PostSharedDetialList.addAll(postShared.getData());
-                        if(postShared!=null)
-                        if(postShared.getPaging() != null && postShared.getPaging().getCursors() != null) {
-                            String after = postShared.getPaging().getCursors().getAfter().toString();
-                            if (postShared.getPaging() != null)
-                                if (postShared.getPaging().getNext() != null) {
-                                    getShareUser(Token, after, contentID);
-                                } else {
-                                    boolean_shared = true;
-                                    Log.d("MYLOG", "getShareUser "+JSONObjectList.PostSharedDetialList.size()+"筆加載完畢.");
-                                }
+                        if(postShared!=null) {
+                            if (postShared.getPaging() != null && postShared.getPaging().getCursors() != null) {
+                                String after = postShared.getPaging().getCursors().getAfter().toString();
+                                if (postShared.getPaging() != null)
+                                    if (postShared.getPaging().getNext() != null) {
+                                        getShareUser(Token, after, contentID);
+                                    } else {
+                                        boolean_shared = true;
+                                        Log.d("MYLOG", "getShareUser " + JSONObjectList.PostSharedDetialList.size() + "筆加載完畢.");
+                                    }
+                            } else {
+                                boolean_shared = true;
+                                Log.d("MYLOG", "getShareUser 沒有資料.");
+                            }
                         }else{
                             boolean_shared = true;
                             Log.d("MYLOG", "getShareUser 沒有資料.");
@@ -225,4 +234,36 @@ public class SendRequest {
 
         request.executeAsync();
     }
+
+    public static void getLuckerPicture(final AccessToken Token, final String contentID){
+        Log.d("MYLOG",contentID);
+        GraphRequest request = GraphRequest.newGraphPathRequest(
+                Token,
+                "/"+contentID+"/picture?type=large",
+                new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        String str = response.getJSONObject().toString().replace("\\","");
+                        Log.d("MYLOG",str);
+
+                        if(response.getJSONObject().toString().length()>30) {
+                            String pictureUrl = str.split("url\":\"")[1].split("\"")[0];
+                            if (pictureUrl.length() > 10) {
+                                Log.d("MYLOG",pictureUrl);
+                                Lottery_Activity.pictureUrl = pictureUrl;
+                                boolean_picture = true;
+                            }
+                        }else{
+                            Log.d("MYLOG","取得相片失敗");
+                        }
+                    }
+                });
+
+        Bundle parameters = new Bundle();
+        parameters.putBoolean("redirect", false);
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
+
+
 }

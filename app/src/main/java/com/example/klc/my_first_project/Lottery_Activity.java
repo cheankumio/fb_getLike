@@ -5,13 +5,22 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.example.klc.my_first_project.Functions.SendRequest;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import cn.carbswang.android.numberpickerview.library.NumberPickerView;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by c1103304 on 2017/4/24.
@@ -19,7 +28,8 @@ import cn.carbswang.android.numberpickerview.library.NumberPickerView;
 
 public class Lottery_Activity extends AppCompatActivity implements NumberPickerView.OnScrollListener, NumberPickerView.OnValueChangeListener,
         NumberPickerView.OnValueChangeListenerInScrolling{
-
+    public static String pictureUrl;
+    public static String luckmansName;
     Handler roll_view;
     NumberPickerView picker;
     String[] display;
@@ -76,6 +86,30 @@ public class Lottery_Activity extends AppCompatActivity implements NumberPickerV
                 roll_view.postDelayed(roll, timer>1000?100:1000-timer);
             }else{
                 roll_view.removeCallbacks(roll);
+                // 轉盤結束
+                String[] content = picker.getDisplayedValues();
+                String luckman = content[picker.getValue() - picker.getMinValue()];
+                luckmansName = luckman.split("/")[0];
+                Log.d("MYLOG",luckman);
+
+                SendRequest.getLuckerPicture(MainActivity.accessToken,luckman.split("/")[1]);
+                try {
+                    sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(SetDisplayData_Activity.removeLuckyMan.isChecked()) {
+                    if(SetDisplayData_Activity.commants.isChecked())
+                        SetDisplayData_Activity.removeLucker(luckman, SetDisplayData_Activity.commants_name);
+                    if(SetDisplayData_Activity.likes.isChecked())
+                        SetDisplayData_Activity.removeLucker(luckman,SetDisplayData_Activity.likes_name);
+                    if(SetDisplayData_Activity.sharedposts.isChecked())
+                        SetDisplayData_Activity.removeLucker(luckman,SetDisplayData_Activity.sharedpost_name);
+                    picker.refreshByNewDisplayedValues(removeString(display,luckman));
+                }
+                Intent forResult = new Intent();
+                forResult.setClass(Lottery_Activity.this,LuckActivity.class);
+                startActivity(forResult);
             }
         }
     };
@@ -85,5 +119,12 @@ public class Lottery_Activity extends AppCompatActivity implements NumberPickerV
         Random random2 = new Random();
         timer = display.length < 3000 ? random2.nextInt(2000)+3000:random2.nextInt(2000)+timer;
         roll_view.post(roll);
+    }
+
+    public String[] removeString(String[] StrArray,String str){
+        List<String> list = new ArrayList<>();
+        list.addAll(Arrays.asList(StrArray));
+        SetDisplayData_Activity.removeLucker(str,list);
+        return list.toArray(new String[0]);
     }
 }

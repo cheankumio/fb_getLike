@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity{
         // If the access token is available already assign it.
         accessToken = AccessToken.getCurrentAccessToken();
 
-
     }
 
     public void choosePost(View v){
@@ -80,6 +79,7 @@ public class MainActivity extends AppCompatActivity{
             boolean_post = false;
             JSONObjectList.FeedPostDetialList.clear();
             SendRequest.limit_counts = 1;
+
             SendRequest.getAllPosted(pageid, accessToken, data_limit, "");
 
             final Handler hn2 = new Handler();

@@ -19,6 +19,7 @@
         <activity android:name=".PostListView"/>
         <activity android:name=".Lottery_Activity"/>
         <activity android:name=".SetDisplayData_Activity"/>
+        <activity android:name=".LuckActivity"/>
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
     </application>
 

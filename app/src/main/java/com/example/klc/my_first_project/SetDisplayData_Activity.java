@@ -21,6 +21,8 @@ import com.facebook.AccessToken;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.example.klc.my_first_project.Functions.SendRequest.getShareUser;
@@ -37,11 +39,12 @@ public class SetDisplayData_Activity extends AppCompatActivity {
     ProgressDialog pgd;
     TextView info_count;
     TextView filter_count;
-    CheckBox likes,commants,sharedposts;
+    public static CheckBox likes,commants,sharedposts,commentsDuplicate,removeLuckyMan;
     List<String> newList;
-    List<String> likes_name;
-    List<String> commants_name;
-    List<String> sharedpost_name;
+    public static List<String> likes_name;
+    public static List<String> commants_name;
+    List<String> commants_name2;
+    public static List<String> sharedpost_name;
     List<String> sendList;
     EditText title;
     int a=0,b=0,c=0;
@@ -56,7 +59,6 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         String postid = "/"+getContentData.getExtras().getString("contentID");
 
 
-
         init();
         getAllInformation(accessToken,postid);
         checkBoxFunction();
@@ -67,12 +69,20 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         likes.setOnCheckedChangeListener(check);
         commants.setOnCheckedChangeListener(check);
         sharedposts.setOnCheckedChangeListener(check);
+        commentsDuplicate.setOnCheckedChangeListener(check);
+        removeLuckyMan.setOnCheckedChangeListener(check);
     }
 
     CompoundButton.OnCheckedChangeListener check = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
+            if(commentsDuplicate.isChecked()){
+                commants_name2 = removeDuplicate(commants_name);
+            }else{
+                commants_name2 = commants_name;
+            }
+            //Log.d("MYLOG","comments count: "+commants_name2.size()+" / "+commants_name.size());
             sendList = new ArrayList<>();
 
             a = likes.isChecked()?1:0;
@@ -84,10 +94,10 @@ public class SetDisplayData_Activity extends AppCompatActivity {
                     sendList = likes_name;
                     break;
                 case 2:
-                    sendList = commants_name;
+                    sendList = commants_name2;
                     break;
                 case 3:
-                    sendList = intersect(likes_name,commants_name);
+                    sendList = intersect(likes_name,commants_name2);
                     break;
                 case 4:
                     sendList = sharedpost_name;
@@ -96,10 +106,10 @@ public class SetDisplayData_Activity extends AppCompatActivity {
                     sendList = intersect(likes_name,sharedpost_name);
                     break;
                 case 6:
-                    sendList = intersect(commants_name,sharedpost_name);
+                    sendList = intersect(commants_name2,sharedpost_name);
                     break;
                 case 7:
-                    sendList = intersect(likes_name,intersect(commants_name,sharedpost_name));
+                    sendList = intersect(likes_name,intersect(commants_name2,sharedpost_name));
                     break;
             }
             if(sendList.size()<1){
@@ -112,6 +122,9 @@ public class SetDisplayData_Activity extends AppCompatActivity {
             }else {
                 filter_count.setText("共有 " + sendList.size() + " 名粉絲");
             }
+
+
+
         }
     };
 
@@ -119,10 +132,13 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         newList = new ArrayList<>();
         likes_name = new ArrayList<>();
         commants_name = new ArrayList<>();
+        commants_name2 = new ArrayList<>();
         sharedpost_name = new ArrayList<>();
         likes = (CheckBox)findViewById(R.id.checkBox);
         commants = (CheckBox)findViewById(R.id.checkBox2);
         sharedposts = (CheckBox)findViewById(R.id.checkBox3);
+        commentsDuplicate = (CheckBox)findViewById(R.id.checkBox4);
+        removeLuckyMan = (CheckBox)findViewById(R.id.checkBox5);
         info_count = (TextView)findViewById(R.id.textView2);
         filter_count = (TextView)findViewById(R.id.textView3);
         watch_data = new Handler();
@@ -201,5 +217,23 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         go.putExtra("lotteryObject",sendList.toArray(new String[0]));
         go.putExtra("title",title.getText().toString());
         startActivity(go);
+    }
+
+    public List<String> removeDuplicate(List<String> list) {
+        List<String> list2;
+        list2 = new ArrayList<>();
+        list2.addAll(list);
+        HashSet h = new HashSet(list2);
+        list2.clear();
+        list2.addAll(h);
+        return list2;
+    }
+
+    public static void removeLucker(String str,List<String> list){
+        Iterator<String> itr = list.iterator();
+        while (itr.hasNext()){
+            String e = itr.next();
+            if(e.equals(str))itr.remove();
+        }
     }
 }
