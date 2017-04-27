@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.klc.my_first_project.Functions.SendRequest;
 
@@ -19,7 +21,9 @@ import java.util.List;
 import java.util.Random;
 
 import cn.carbswang.android.numberpickerview.library.NumberPickerView;
+import es.dmoral.toasty.Toasty;
 
+import static com.example.klc.my_first_project.Functions.SendRequest.boolean_picture;
 import static java.lang.Thread.sleep;
 
 /**
@@ -35,7 +39,9 @@ public class Lottery_Activity extends AppCompatActivity implements NumberPickerV
     String[] display;
     int timer;
     int counts = 1;
+    boolean isRoll = false;
     TextView title;
+    TextView info;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +53,12 @@ public class Lottery_Activity extends AppCompatActivity implements NumberPickerV
         display = getArray.getStringArrayExtra("lotteryObject");
         picker = (NumberPickerView) findViewById(R.id.picker);
         title = (TextView)findViewById(R.id.textView4);
+        info = (TextView)findViewById(R.id.textView7);
         title.setText(getArray.getStringExtra("title"));
         picker.setOnScrollListener(this);
         picker.setOnValueChangedListener(this);
         picker.setOnValueChangeListenerInScrolling(this);
-        picker.refreshByNewDisplayedValues(display);
+        //picker.refreshByNewDisplayedValues(display);
         roll_view = new Handler();
 
     }
@@ -75,6 +82,7 @@ public class Lottery_Activity extends AppCompatActivity implements NumberPickerV
         @Override
         public void run() {
             if(timer>0) {
+                isRoll = true;
                 int pass = display.length>15? display.length/10:1;
                 Random random = new Random();
                 if(timer>500) {
@@ -91,35 +99,48 @@ public class Lottery_Activity extends AppCompatActivity implements NumberPickerV
                 String luckman = content[picker.getValue() - picker.getMinValue()];
                 luckmansName = luckman.split("/")[0];
                 Log.d("MYLOG",luckman);
-
+                boolean_picture = false;
                 SendRequest.getLuckerPicture(MainActivity.accessToken,luckman.split("/")[1]);
                 try {
-                    sleep(1500);
+                    sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
-                if(SetDisplayData_Activity.removeLuckyMan.isChecked()) {
-                    if(SetDisplayData_Activity.commants.isChecked())
-                        SetDisplayData_Activity.removeLucker(luckman, SetDisplayData_Activity.commants_name);
-                    if(SetDisplayData_Activity.likes.isChecked())
-                        SetDisplayData_Activity.removeLucker(luckman,SetDisplayData_Activity.likes_name);
-                    if(SetDisplayData_Activity.sharedposts.isChecked())
-                        SetDisplayData_Activity.removeLucker(luckman,SetDisplayData_Activity.sharedpost_name);
-                    picker.refreshByNewDisplayedValues(removeString(display,luckman));
                 }
                 Intent forResult = new Intent();
                 forResult.setClass(Lottery_Activity.this,LuckActivity.class);
                 startActivity(forResult);
                 overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+
+                if(SetDisplayData_Activity.removeLuckyMan.isChecked()) {
+                    if (SetDisplayData_Activity.commants.isChecked())
+                        SetDisplayData_Activity.removeLucker(luckman, SetDisplayData_Activity.commants_name);
+                    if (SetDisplayData_Activity.likes.isChecked())
+                        SetDisplayData_Activity.removeLucker(luckman, SetDisplayData_Activity.likes_name);
+                    if (SetDisplayData_Activity.sharedposts.isChecked())
+                        SetDisplayData_Activity.removeLucker(luckman, SetDisplayData_Activity.sharedpost_name);
+                    display = removeString(display, luckman);
+                }
+                isRoll = false;
             }
         }
     };
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        picker.refreshByNewDisplayedValues(display);
+        info.setText("參與抽獎人數: "+display.length);
+    }
+
     public void rollbtn(View v){
-        counts = 1;
-        Random random2 = new Random();
-        timer = display.length < 3000 ? random2.nextInt(2000)+3000:random2.nextInt(2000)+timer;
-        roll_view.post(roll);
+        if(isRoll == true){
+            Toasty.info(this,"請等待轉盤結束", Toast.LENGTH_LONG,true).show();
+        }else {
+            counts = 1;
+            Random random2 = new Random();
+            timer = display.length < 3000 ? random2.nextInt(2000) + 3000 : random2.nextInt(2000) + timer;
+            roll_view.post(roll);
+        }
     }
 
     public String[] removeString(String[] StrArray,String str){

@@ -13,10 +13,14 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.klc.my_first_project.Functions.SendRequest;
 import com.example.klc.my_first_project.Object.JSONObjectList;
 import com.facebook.AccessToken;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +39,7 @@ import static com.example.klc.my_first_project.MainActivity.accessToken;
  */
 
 public class SetDisplayData_Activity extends AppCompatActivity {
+    InterstitialAd mInterstitialAd;
     Handler watch_data;
     ProgressDialog pgd;
     TextView info_count;
@@ -61,7 +66,24 @@ public class SetDisplayData_Activity extends AppCompatActivity {
 
         init();
         getAllInformation(accessToken,postid);
+        adsShow();
         checkBoxFunction();
+    }
+
+    private void adsShow() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-7003556787929258/9376652927");
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+            }
+        });
+
+        requestNewInterstitial();
+
+
     }
 
     private void checkBoxFunction() {
@@ -127,6 +149,12 @@ public class SetDisplayData_Activity extends AppCompatActivity {
 
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
 
     private void init() {
         newList = new ArrayList<>();
@@ -214,6 +242,18 @@ public class SetDisplayData_Activity extends AppCompatActivity {
     }
 
     public void alreadyGO(View v){
+        final Handler hnn = new Handler();
+        hnn.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                    hnn.removeCallbacks(this);
+                }else{
+                    hnn.postDelayed(this,1000);
+                }
+            }
+        });
         Intent go = new Intent();
         go.setClass(this,Lottery_Activity.class);
         go.putExtra("lotteryObject",sendList.toArray(new String[0]));
@@ -238,5 +278,13 @@ public class SetDisplayData_Activity extends AppCompatActivity {
             String e = itr.next();
             if(e.equals(str))itr.remove();
         }
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("2C3CCB95BCF1C694D8D939B882F755CD")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
     }
 }

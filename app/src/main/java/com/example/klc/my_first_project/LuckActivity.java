@@ -2,6 +2,7 @@ package com.example.klc.my_first_project;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,6 +17,8 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.makeramen.roundedimageview.RoundedImageView;
+
+import static com.example.klc.my_first_project.Functions.SendRequest.boolean_picture;
 
 /**
  * Created by c1103304 on 2017/4/26.
@@ -34,7 +37,19 @@ public class LuckActivity extends AppCompatActivity {
 
         init();
 
-        LoadPic();
+        final Handler hn = new Handler();
+        hn.post(new Runnable() {
+            @Override
+            public void run() {
+                if(boolean_picture==true){
+                    LoadPic();
+                    hn.removeCallbacks(this);
+                }else{
+                    hn.postDelayed(this,1000);
+                }
+            }
+        });
+
 
     }
 
