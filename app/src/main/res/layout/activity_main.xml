@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
-    tools:context="com.example.klc.my_first_project.MainActivity">
+    tools:context="com.appers.klc.fblottery.MainActivity">
 
 
     <TextView
