@@ -1,19 +1,31 @@
 package com.appers.klc.fblottery.Object;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by klc on 2017/4/22.
  */
 
 public class Detial {
-        public String created_time;
-        public String message;
-        public String id;
-        public String name;
-        public String story;
-        public From from;
+    public String created_time;
+    public String message;
+    public String id;
+    public String name;
+    public List<msgtag> message_tags = new ArrayList<>();
+    public String story;
+    public From from;
 
     public From getFrom() {
         return from;
+    }
+
+    public List<msgtag> getMessage_tags() {
+        return message_tags;
+    }
+
+    public void setMessage_tags(List<msgtag> message_tags) {
+        this.message_tags = message_tags;
     }
 
     public void setFrom(From from) {
@@ -29,28 +41,28 @@ public class Detial {
     }
 
     public String getCreated_time() {
-            return created_time;
-        }
+        return created_time;
+    }
 
-        public void setCreated_time(String created_time) {
-            this.created_time = created_time;
-        }
+    public void setCreated_time(String created_time) {
+        this.created_time = created_time;
+    }
 
-        public String getMessage() {
-            return message;
-        }
+    public String getMessage() {
+        return message;
+    }
 
-        public void setMessage(String message) {
-            this.message = message;
-        }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-        public String getId() {
-            return id;
-        }
+    public String getId() {
+        return id;
+    }
 
-        public void setId(String id) {
-            this.id = id;
-        }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

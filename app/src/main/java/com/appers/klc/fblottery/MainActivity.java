@@ -20,6 +20,7 @@ import com.appers.klc.fblottery.Object.FeedPost;
 import com.appers.klc.fblottery.Object.JSONObjectList;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
+import com.klapper.mylibrary.ToastR;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -21,6 +21,9 @@
         <activity android:name="com.appers.klc.fblottery.SetDisplayData_Activity"/>
         <activity android:name="com.appers.klc.fblottery.LuckActivity"/>
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="0fc30a642853e4ea98eb7d11b446e6437df45cc1" />
     </application>
 
 </manifest>

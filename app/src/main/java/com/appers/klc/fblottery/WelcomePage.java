@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.appers.klc.fblottery.Functions.SendRequest;
+import com.crashlytics.android.Crashlytics;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -17,6 +18,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 import es.dmoral.toasty.Toasty;
+import io.fabric.sdk.android.Fabric;
 
 import static com.appers.klc.fblottery.MainActivity.accessToken;
 
@@ -30,6 +32,7 @@ public class WelcomePage extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(com.appers.klc.fblottery.R.layout.welcome_page);
 
         getSupportActionBar().hide();

@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.appers.klc.fblottery.Functions.SendRequest.getShareUser;
+import static com.appers.klc.fblottery.Functions.SendRequest.getTagsComments;
 import static com.appers.klc.fblottery.Functions.SendRequest.getcommentsUser;
 import static com.appers.klc.fblottery.Functions.SendRequest.getlikeUser;
 import static com.appers.klc.fblottery.MainActivity.accessToken;
@@ -42,15 +43,17 @@ public class SetDisplayData_Activity extends AppCompatActivity {
     ProgressDialog pgd;
     TextView info_count;
     TextView filter_count;
-    public static CheckBox likes,commants,sharedposts,commentsDuplicate,removeLuckyMan;
+    public static CheckBox likes, commants, sharedposts, commentsDuplicate, removeLuckyMan, tags;
     List<String> newList;
     public static List<String> likes_name;
     public static List<String> commants_name;
+    public static List<String> tags_name;
     List<String> commants_name2;
     public static List<String> sharedpost_name;
     List<String> sendList;
     EditText title;
-    int a=0,b=0,c=0;
+    int a = 0, b = 0, c = 0;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,11 +62,11 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         Intent getContentData = getIntent();
-        String postid = "/"+getContentData.getExtras().getString("contentID");
+        String postid = "/" + getContentData.getExtras().getString("contentID");
 
 
         init();
-        getAllInformation(accessToken,postid);
+        getAllInformation(accessToken, postid);
         adsShow();
         checkBoxFunction();
     }
@@ -85,7 +88,8 @@ public class SetDisplayData_Activity extends AppCompatActivity {
     }
 
     private void checkBoxFunction() {
-        title = (EditText)findViewById(com.appers.klc.fblottery.R.id.editText2);
+        title = (EditText) findViewById(com.appers.klc.fblottery.R.id.editText2);
+        tags.setOnCheckedChangeListener(check);
         likes.setOnCheckedChangeListener(check);
         commants.setOnCheckedChangeListener(check);
         sharedposts.setOnCheckedChangeListener(check);
@@ -97,52 +101,52 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-            if(commentsDuplicate.isChecked()){
-                commants_name2 = removeDuplicate(commants_name);
-            }else{
-                commants_name2 = commants_name;
+            if (commentsDuplicate.isChecked()) {
+                commants_name2 = tags.isChecked() ? removeDuplicate(tags_name) : removeDuplicate(commants_name);
+            } else {
+                commants_name2 = tags.isChecked() ? tags_name : commants_name;
             }
             //Log.d("MYLOG","comments count: "+commants_name2.size()+" / "+commants_name.size());
             sendList = new ArrayList<>();
 
-            a = likes.isChecked()?1:0;
-            b = commants.isChecked()?2:0;
-            c = sharedposts.isChecked()?4:0;
-            int num = a+b+c;
-            switch (num){
+            a = likes.isChecked() ? 1 : 0;
+            b = commants.isChecked() ? 2 : 0;
+            c = sharedposts.isChecked() ? 4 : 0;
+            int num = a + b + c;
+            switch (num) {
                 case 1:
                     sendList = likes_name;
                     break;
                 case 2:
+
                     sendList = commants_name2;
                     break;
                 case 3:
-                    sendList = intersect(likes_name,commants_name2);
+                    sendList = intersect(likes_name, commants_name2);
                     break;
                 case 4:
                     sendList = sharedpost_name;
                     break;
                 case 5:
-                    sendList = intersect(likes_name,sharedpost_name);
+                    sendList = intersect(likes_name, sharedpost_name);
                     break;
                 case 6:
-                    sendList = intersect(commants_name2,sharedpost_name);
+                    sendList = intersect(commants_name2, sharedpost_name);
                     break;
                 case 7:
-                    sendList = intersect(likes_name,intersect(commants_name2,sharedpost_name));
+                    sendList = intersect(likes_name, intersect(commants_name2, sharedpost_name));
                     break;
             }
-            if(sendList.size()<1){
-                if(num>0){
+            if (sendList.size() < 1) {
+                if (num > 0) {
                     filter_count.setText("共有 " + sendList.size() + " 名粉絲");
-                }else{
+                } else {
                     filter_count.setText("請選擇抽獎依據\n choose any option");
                 }
 
-            }else {
+            } else {
                 filter_count.setText("共有 " + sendList.size() + " 名粉絲");
             }
-
 
 
         }
@@ -158,15 +162,17 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         newList = new ArrayList<>();
         likes_name = new ArrayList<>();
         commants_name = new ArrayList<>();
+        tags_name = new ArrayList<>();
         commants_name2 = new ArrayList<>();
         sharedpost_name = new ArrayList<>();
-        likes = (CheckBox)findViewById(com.appers.klc.fblottery.R.id.checkBox);
-        commants = (CheckBox)findViewById(com.appers.klc.fblottery.R.id.checkBox2);
-        sharedposts = (CheckBox)findViewById(com.appers.klc.fblottery.R.id.checkBox3);
-        commentsDuplicate = (CheckBox)findViewById(com.appers.klc.fblottery.R.id.checkBox4);
-        removeLuckyMan = (CheckBox)findViewById(com.appers.klc.fblottery.R.id.checkBox5);
-        info_count = (TextView)findViewById(com.appers.klc.fblottery.R.id.textView2);
-        filter_count = (TextView)findViewById(com.appers.klc.fblottery.R.id.textView3);
+        tags = (CheckBox) findViewById(R.id.checkBox6);
+        likes = (CheckBox) findViewById(com.appers.klc.fblottery.R.id.checkBox);
+        commants = (CheckBox) findViewById(com.appers.klc.fblottery.R.id.checkBox2);
+        sharedposts = (CheckBox) findViewById(com.appers.klc.fblottery.R.id.checkBox3);
+        commentsDuplicate = (CheckBox) findViewById(com.appers.klc.fblottery.R.id.checkBox4);
+        removeLuckyMan = (CheckBox) findViewById(com.appers.klc.fblottery.R.id.checkBox5);
+        info_count = (TextView) findViewById(com.appers.klc.fblottery.R.id.textView2);
+        filter_count = (TextView) findViewById(com.appers.klc.fblottery.R.id.textView3);
         watch_data = new Handler();
         pgd = new ProgressDialog(this);
 
@@ -174,13 +180,15 @@ public class SetDisplayData_Activity extends AppCompatActivity {
 
 
     private void getAllInformation(final AccessToken Token, final String contentID) {
-        watch_data.postDelayed(runnable,1000);
-        SendRequest.boolean_likes=false;
-        SendRequest.boolean_commends=false;
-        SendRequest.boolean_shared=false;
+        watch_data.postDelayed(runnable, 1000);
+        SendRequest.boolean_likes = false;
+        SendRequest.boolean_commends = false;
+        SendRequest.boolean_shared = false;
+        SendRequest.boolean_tags = false;
         JSONObjectList.PostLikeDetialList = new ArrayList<>();
         JSONObjectList.PostCommentsDetialList = new ArrayList<>();
         JSONObjectList.PostSharedDetialList = new ArrayList<>();
+        JSONObjectList.PostTagsCommentList = new ArrayList<>();
         pgd.setTitle("請稍候");
         pgd.setCancelable(false);
         pgd.setMessage("資料讀取中");
@@ -188,46 +196,55 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         getlikeUser(Token, "", contentID);
         getcommentsUser(Token, "", contentID);
         getShareUser(Token, "", contentID);
-
-        Log.d("MYLOG","讀取資料中..");
+        getTagsComments(Token, "", contentID);
+        Log.d("MYLOG", "讀取資料中..");
     }
 
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if(SendRequest.boolean_likes && SendRequest.boolean_commends && SendRequest.boolean_shared){
+            if (SendRequest.boolean_likes && SendRequest.boolean_commends && SendRequest.boolean_shared) {
                 pgd.dismiss();
                 info_count.setText("Likes: " + JSONObjectList.PostLikeDetialList.size() +
                         "  Commants: " + JSONObjectList.PostCommentsDetialList.size() +
-                        "  Sharedpost: " + JSONObjectList.PostSharedDetialList.size()+
+                        "  Sharedpost: " + JSONObjectList.PostSharedDetialList.size() +
                         "  \n讚: " + JSONObjectList.PostLikeDetialList.size() +
                         "  留言: " + JSONObjectList.PostCommentsDetialList.size() +
                         "  分享: " + JSONObjectList.PostSharedDetialList.size()
                 );
                 watch_data.removeCallbacks(runnable);
                 transAllData();
-            }else{
-                watch_data.postDelayed(runnable,1000);
+            } else {
+                watch_data.postDelayed(runnable, 1000);
             }
         }
     };
 
     private void transAllData() {
-        for(int i=0;i<JSONObjectList.PostLikeDetialList.size();i++){
-            String str = JSONObjectList.PostLikeDetialList.get(i).getName()+"/"+JSONObjectList.PostLikeDetialList.get(i).getId();
+
+        for (int i = 0; i < JSONObjectList.PostLikeDetialList.size(); i++) {
+            String str = JSONObjectList.PostLikeDetialList.get(i).getName() + "/" + JSONObjectList.PostLikeDetialList.get(i).getId();
             likes_name.add(str);
             //Log.d("MYLOG","likes: "+str);
         }
-        for(int i=0;i<JSONObjectList.PostCommentsDetialList.size();i++){
-            String str = JSONObjectList.PostCommentsDetialList.get(i).getFrom().getName()+"/"+JSONObjectList.PostCommentsDetialList.get(i).getFrom().getId();
+
+        for (int i = 0; i < JSONObjectList.PostTagsCommentList.size(); i++) {
+            String str = JSONObjectList.PostTagsCommentList.get(i).getFrom().getName() + "/" + JSONObjectList.PostTagsCommentList.get(i).getFrom().getId();
+            tags_name.add(str);
+            //Log.d("MYLOG","commants: "+str);
+        }
+
+        for (int i = 0; i < JSONObjectList.PostCommentsDetialList.size(); i++) {
+            String str = JSONObjectList.PostCommentsDetialList.get(i).getFrom().getName() + "/" + JSONObjectList.PostCommentsDetialList.get(i).getFrom().getId();
             commants_name.add(str);
             //Log.d("MYLOG","commants: "+str);
         }
 
-        for(int i=0;i<JSONObjectList.PostSharedDetialList.size();i++){
+
+        for (int i = 0; i < JSONObjectList.PostSharedDetialList.size(); i++) {
             String name = JSONObjectList.PostSharedDetialList.get(i).getFrom().getName();
             String id = JSONObjectList.PostSharedDetialList.get(i).getFrom().getId();
-            sharedpost_name.add(name+"/"+id);
+            sharedpost_name.add(name + "/" + id);
             //Log.d("MYLOG","shares: "+name+"/"+id);
         }
     }
@@ -239,7 +256,7 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         return list;
     }
 
-    public void alreadyGO(View v){
+    public void alreadyGO(View v) {
         final Handler hnn = new Handler();
         hnn.post(new Runnable() {
             @Override
@@ -247,17 +264,17 @@ public class SetDisplayData_Activity extends AppCompatActivity {
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
                     hnn.removeCallbacks(this);
-                }else{
-                    hnn.postDelayed(this,1000);
+                } else {
+                    hnn.postDelayed(this, 1000);
                 }
             }
         });
         Intent go = new Intent();
-        go.setClass(this,Lottery_Activity.class);
-        go.putExtra("lotteryObject",sendList.toArray(new String[0]));
-        go.putExtra("title",title.getText().toString());
+        go.setClass(this, Lottery_Activity.class);
+        go.putExtra("lotteryObject", sendList.toArray(new String[0]));
+        go.putExtra("title", title.getText().toString());
         startActivity(go);
-        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     public List<String> removeDuplicate(List<String> list) {
@@ -270,11 +287,11 @@ public class SetDisplayData_Activity extends AppCompatActivity {
         return list2;
     }
 
-    public static void removeLucker(String str,List<String> list){
+    public static void removeLucker(String str, List<String> list) {
         Iterator<String> itr = list.iterator();
-        while (itr.hasNext()){
+        while (itr.hasNext()) {
             String e = itr.next();
-            if(e.equals(str))itr.remove();
+            if (e.equals(str)) itr.remove();
         }
     }
 

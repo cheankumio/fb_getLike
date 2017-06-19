@@ -24,7 +24,7 @@ import es.dmoral.toasty.Toasty;
  */
 
 public class SendRequest {
-    public static boolean boolean_post=false,boolean_likes=false,boolean_commends=false,boolean_shared=false,boolean_picture=false;
+    public static boolean boolean_tags=false,boolean_post=false,boolean_likes=false,boolean_commends=false,boolean_shared=false,boolean_picture=false;
     public static String tmp="";
     public static AccessTokenTracker accessTokenTracker;
     public static String pageid;
@@ -142,6 +142,54 @@ public class SendRequest {
         Bundle parameters = new Bundle();
         parameters.putString("pretty","0");
         parameters.putString("fields", "from,message");
+        parameters.putString("limit", "100");
+        if(afterdata.length()>1){
+            parameters.putString("after", afterdata);
+        }
+        request.setParameters(parameters);
+        request.executeAsync();
+    }
+    public static void getTagsComments(final AccessToken Token, String afterdata, final String contentID) {
+        GraphRequest request = GraphRequest.newGraphPathRequest(
+                Token,
+                contentID+"/comments",
+                new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        Gson gson = new Gson();
+                        String tmpstr = response.getJSONObject().toString();
+                        //tmpstr = tmpstr.replace("[","").replace("]","");
+                        //tmpstr = tmpstr.replace("\"data\":{","\"data\":[{").replace("},\"paging\":","}],\"paging\":");
+                        //tmpstr = tmpstr.replace(", \"paging\":","], \"paging\":").replace("\"data\": ","\"data\": [");
+                        //Log.d("MYLOG",tmpstr);
+                        Comments postComments = gson.fromJson(tmpstr,Comments.class);
+                        //存入所有文章至List
+                        for(int i=0;i<postComments.getData().size();i++) {
+                            if (postComments != null)
+                                if (postComments.getData().get(i).getMessage_tags().size() != 0)
+                                    JSONObjectList.PostTagsCommentList.add(postComments.getData().get(i));
+                            //Log.d("MYLOG",postComments.getData().get(i).getMessage_tags().size()==0?"Tag is NULL":"Tag not Null");
+                        }
+                        if(postComments!=null)
+                            if(postComments.getPaging() != null && postComments.getPaging().getCursors() != null) {
+                                String after = postComments.getPaging().getCursors().getAfter().toString();
+                                if (postComments.getPaging().getNext() != null) {
+                                    getTagsComments(Token, after, contentID);
+                                } else {
+                                    boolean_tags = true;
+                                    Log.d("MYLOG", "getTagscomments "+JSONObjectList.PostTagsCommentList.size()+"筆加載完畢.");
+                                }
+                            }else{
+                                boolean_tags = true;
+                                Log.d("MYLOG", "getTagscomments 沒有資料.");
+                            }
+
+                    }
+                });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("pretty","0");
+        parameters.putString("fields", "message_tags,from");
         parameters.putString("limit", "100");
         if(afterdata.length()>1){
             parameters.putString("after", afterdata);

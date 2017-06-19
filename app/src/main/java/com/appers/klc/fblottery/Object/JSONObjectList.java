@@ -13,4 +13,5 @@ public class JSONObjectList {
     public static List<Detial> PostLikeDetialList = new ArrayList<>();
     public static List<Detial> PostSharedDetialList = new ArrayList<>();
     public static List<Detial> PostCommentsDetialList = new ArrayList<>();
+    public static List<Detial> PostTagsCommentList = new ArrayList<>();
 }

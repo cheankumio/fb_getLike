@@ -9,12 +9,33 @@
 
 
     <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView"
+        android:layout_centerHorizontal="false"
+        android:text="目前僅支持粉絲專頁"
+        android:textColor="#FF0000"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="e.g.\n蔡英文專頁: https://www.facebook.com/tsaiingwen\n馬英九專頁: https://www.facebook.com/MaYingjeou\n可以直接使用整串網址，也可以直接使用tsaiingwen\n不會使用請來信，不要再亂給評價了拜託\n4ndroid4ppdev@gmail.com"
+        android:textColor="#FF0000"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/editText"
         android:layout_centerHorizontal="false"
-        android:text="請輸入粉絲頁網址或ＩＤ\nInput your fans page URL or ID "
+        android:text="請輸入粉絲頁網址或粉專ＩＤ\nInput your fans page URL or ID "
         android:textSize="16sp"
         android:textStyle="bold" />
 
